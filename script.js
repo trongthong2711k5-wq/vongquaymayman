@@ -1,4 +1,4 @@
-
+// BẮT ĐẦU VỚI DANH SÁCH TRỐNG TRƠN!
 let danhSachPhanQuat = []; 
 
 let currentAngle = 0;
@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
     capNhatToanBoGiaoDien();
 });
 
-
+// Chuyển tab
 function doiGiaoDien(loai) {
     const bocThamSec = document.getElementById("bocThamSection");
     const vongQuaySec = document.getElementById("vongQuaySection");
@@ -30,13 +30,14 @@ function doiGiaoDien(loai) {
     capNhatToanBoGiaoDien();
 }
 
-
+// Cập nhật cả bánh xe, danh sách xóa và hộp quà cùng 1 lúc
 function capNhatToanBoGiaoDien() {
     veVongQuay(currentAngle);
     khoiTaoBocTham();
     hienThiDanhSachQuanLy();
 }
 
+// Thêm quà trực tiếp
 function themQuaMoi() {
     const input = document.getElementById("inputTenQua");
     const tenQua = input.value.trim();
@@ -55,7 +56,7 @@ function themQuaMoi() {
     capNhatToanBoGiaoDien();
 }
 
-
+// Hàm mới: Hiển thị danh sách để xóa
 function hienThiDanhSachQuanLy() {
     const list = document.getElementById("manageGiftsList");
     if (!list) return;
@@ -76,12 +77,13 @@ function hienThiDanhSachQuanLy() {
     });
 }
 
+// Hàm mới: Xóa món quà khỏi mảng
 function xoaQua(index) {
     danhSachPhanQuat.splice(index, 1);
     capNhatToanBoGiaoDien();
 }
 
-
+// Vẽ vòng quay hình tròn bằng Canvas
 function veVongQuay(angle) {
     const canvas = document.getElementById("wheelCanvas");
     if (!canvas) return;
@@ -94,6 +96,7 @@ function veVongQuay(angle) {
 
     const total = danhSachPhanQuat.length;
 
+    // Xử lý khi chưa có quà (vẽ một vòng xám trống)
     if (total === 0) {
         ctx.beginPath();
         ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
@@ -116,7 +119,7 @@ function veVongQuay(angle) {
         const startAngle = angle + i * arcSize;
         const endAngle = startAngle + arcSize;
 
-
+        // Vẽ miếng bánh
         ctx.beginPath();
         ctx.moveTo(centerX, centerY);
         ctx.arc(centerX, centerY, radius, startAngle, endAngle);
@@ -128,7 +131,7 @@ function veVongQuay(angle) {
         ctx.strokeStyle = "#ffffff";
         ctx.stroke();
 
-
+        // Vẽ chữ
         ctx.save();
         ctx.translate(centerX, centerY);
         ctx.rotate(startAngle + arcSize / 2);
@@ -139,6 +142,7 @@ function veVongQuay(angle) {
         ctx.restore();
     });
 
+    // Vẽ tâm vòng quay
     ctx.beginPath();
     ctx.arc(centerX, centerY, 18, 0, 2 * Math.PI);
     ctx.fillStyle = "#ffffff";
@@ -148,7 +152,7 @@ function veVongQuay(angle) {
     ctx.stroke();
 }
 
-
+// Hiệu ứng quay
 function batDauQuay() {
     if (danhSachPhanQuat.length === 0) {
         alert("Bánh xe trống trơn rồi, thêm quà vào trước đã nha!");
@@ -208,7 +212,7 @@ function resetVongQuay() {
     document.getElementById("btnReset").style.display = "none";
 }
 
-
+// Giao diện bốc thăm
 function khoiTaoBocTham() {
     const container = document.getElementById("giftList");
     container.innerHTML = ""; 
@@ -238,7 +242,7 @@ function chonHopQua(tenQua) {
     }, 500);
 }
 
-
+// Lịch sử
 function luuLichSu(ketQua) {
     let history = JSON.parse(localStorage.getItem("minigameHistory")) || [];
     const thoiGian = new Date().toLocaleTimeString();
