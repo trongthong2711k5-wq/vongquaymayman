@@ -13,7 +13,7 @@ body {
     overflow-x: hidden;
 }
 
-/* Biểu tượng bay lơ lửng background */
+
 .floating-shapes {
     position: absolute;
     font-size: 40px;
@@ -63,7 +63,7 @@ h1 {
     justify-content: center;
     gap: 10px;
     margin-bottom: 25px;
-    flex-wrap: wrap; /* Tự động xuống dòng nếu màn hình quá nhỏ */
+    flex-wrap: wrap;
 }
 .tab-btn {
     background: #f1f2f6;
@@ -84,7 +84,7 @@ h1 {
     transform: scale(1.05);
 }
 
-/* Khung thêm quà */
+
 .add-box {
     margin-bottom: 20px;
     display: flex;
@@ -118,12 +118,12 @@ h1 {
     white-space: nowrap;
 }
 
-/* Vòng quay Canvas - Đã tối ưu cho mọi màn hình */
+
 .wheel-container {
     position: relative;
     width: 100%;
-    max-width: 280px; /* Giới hạn độ lớn tối đa */
-    aspect-ratio: 1 / 1; /* Luôn giữ hình vuông */
+    max-width: 280px;
+    aspect-ratio: 1 / 1; 
     margin: 0 auto 20px auto;
 }
 #wheelCanvas {
@@ -141,7 +141,7 @@ h1 {
     filter: drop-shadow(0 4px 4px rgba(0,0,0,0.2));
 }
 
-/* Hộp quà bốc thăm - Đã tối ưu tự động chia cột */
+
 .gift-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); /* Tự động co giãn theo màn hình */
@@ -174,7 +174,7 @@ h1 {
     white-space: nowrap;
 }
 
-/* Các nút bấm khác */
+
 .btn {
     border: none;
     padding: 12px 25px;
@@ -219,7 +219,7 @@ h1 {
     text-align:center;
 }
 
-/* THÊM ĐOẠN NÀY ĐỂ ẨN Ô KHI CHƯA CÓ KẾT QUẢ */
+
 #result:empty {
     display: none;
 }
@@ -261,7 +261,6 @@ h1 {
     font-weight: bold;
     cursor: pointer;
 }
-/* -- CÁC STYLE MỚI CHO DANH SÁCH QUẢN LÝ QUÀ -- */
 .manage-gifts-box {
     margin-bottom: 15px;
     background: #fff;
@@ -304,7 +303,6 @@ h1 {
     background: #ff6b81;
 }
 
-/* Đảm bảo text box rỗng báo lỗi dễ nhìn */
 .empty-msg {
     color: #a4b0be;
     font-size: 12px;
@@ -313,7 +311,7 @@ h1 {
     font-weight: 600;
 }
 
-/* -- GIỮ NGUYÊN CÁC STYLE CŨ Ở TRÊN -- */
+
 * { box-sizing: border-box; }
 body { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%); min-height: 100vh; margin: 0; display: flex; justify-content: center; align-items: center; font-family: 'Nunito', sans-serif; padding: 20px 10px; overflow-x: hidden; }
 .floating-shapes { position: absolute; font-size: 40px; opacity: 0.6; animation: float 4s ease-in-out infinite; z-index: 0; }
