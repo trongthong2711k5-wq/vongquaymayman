@@ -274,3 +274,24 @@ function xoaLichSu() {
         document.getElementById("result").innerHTML = "";
     }
 }
+// ==========================================
+// HÀM GỬI BÁO CÁO VỀ GOOGLE SHEETS
+// ==========================================
+function guiBaoCaoChoMi(ten, qua) {
+    const thoiGianHienTai = new Date().toLocaleString('vi-VN');
+    const duLieu = {
+        thoiGian: thoiGianHienTai,
+        tenKhach: ten,
+        quaTrung: qua
+    };
+
+    // MỊ DÁN CÁI LINK GOOGLE VỪA COPY VÀO GIỮA 2 DẤU NGOẶC KÉP BÊN DƯỚI:
+    const linkGoogleSheet = "https://script.google.com/macros/s/AKfycbxBChxqho4jazJjF_bw4JYaaWBo8bOGCu3D9hyaVg9GneoQZOYnyD-WXDb6pMcdkc_tag/execDÁN_LINK_WEB_APP_URL_CỦA_MỊ_VÀO_ĐÂY";
+
+    if (linkGoogleSheet !== "https://script.google.com/macros/s/AKfycbxBChxqho4jazJjF_bw4JYaaWBo8bOGCu3D9hyaVg9GneoQZOYnyD-WXDb6pMcdkc_tag/execDÁN_LINK_WEB_APP_URL_CỦA_MỊ_VÀO_ĐÂY") {
+        fetch(linkGoogleSheet, {
+            method: "POST",
+            body: JSON.stringify(duLieu)
+        }).catch(err => console.log("Lỗi:", err));
+    }
+}
