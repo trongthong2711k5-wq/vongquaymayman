@@ -3,44 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trạm Quà Bí Ẩn 🎁</title>
-    <!-- Phông chữ siêu xinh -->
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700;900&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <title>Trạm Quà Tặng Dễ Thương 🌸</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Icon bay lơ lửng -->
-    <div class="floating-shapes shape-1">☁️</div>
+
+    <!-- Trang trí bay lơ lửng -->
+   <div class="floating-shapes shape-1">💖</div>
     <div class="floating-shapes shape-2">✨</div>
-    <div class="floating-shapes shape-3">🎀</div>
-
-    <div class="glass-container">
-        <h1>Trạm Quà Bí Ẩn 🌸</h1>
+    <div class="floating-shapes shape-3">🌸</div>
+    <div class="floating-shapes shape-4">🧸</div>
+    <div class="container">
+        <h1>Trạm Quà Tặng 🌸</h1>
+        <p class="subtitle">Hãy thử xem hôm nay vũ trụ gửi gì cho bạn nhé!</p>
         
-        <!-- MÀN HÌNH 1: NHẬP TÊN -->
-        <div id="loginScreen" class="screen-active">
-            <p class="subtitle">Nhập tên của bạn để nhận quà từ Mị nhé!</p>
-            <div class="input-group">
-                <input type="text" id="inputTenKhach" placeholder="VD: Lan Nguyễn..." autocomplete="off" />
+        <!-- Nút chuyển tab -->
+        <div class="tab-buttons">
+            <button class="tab-btn active" onclick="doiGiaoDien('bocTham')">🎁 Bốc Thăm</button>
+            <button class="tab-btn" onclick="doiGiaoDien('vongQuay')">🎡 Vòng Quay</button>
+        </div>
+
+        <!-- GIAO DIỆN 1: BỐC THĂM -->
+        <div id="bocThamSection" class="game-section">
+            <div id="giftList" class="gift-grid"></div>
+        </div>
+
+        <!-- GIAO DIỆN 2: VÒNG QUAY -->
+        <div id="vongQuaySection" class="game-section" style="display: none;">
+            
+            <div class="add-box">
+                <input type="text" id="inputTenQua" placeholder="Thêm món quà mới vô đây..." />
+                <button class="btn-add" onclick="themQuaMoi()">Thêm</button>
             </div>
-            <button class="btn-glow" onclick="xacNhanTen()">Mở Quà Ngay</button>
-        </div>
 
-        <!-- MÀN HÌNH 2: CHỌN TÚI MÙ -->
-        <div id="gameScreen" style="display: none;">
-            <p class="subtitle">Xin chào <span id="tenHienThi" class="highlight-text"></span>!<br>Bạn có 1 lượt chọn túi mù duy nhất.</p>
-            <div id="boxGrid" class="box-grid"></div>
-        </div>
+            <!-- Nơi hiển thị danh sách để xóa -->
+            <div class="manage-gifts-box">
+                <ul id="manageGiftsList" class="manage-gifts-list"></ul>
+            </div>
 
-        <!-- MÀN HÌNH 3: KẾT QUẢ -->
-        <div id="resultCard" class="result-card" style="display: none;">
-            <div class="congrats-icon">🎉</div>
-            <h2>Tadaaa!</h2>
-            <p class="result-owner">Khách hàng: <span id="tenKhachKetQua"></span></p>
-            <div id="resultText" class="prize-name"></div>
-            <div class="divider"></div>
-            <p class="note">Lưu ý: Mị đã ghi nhận hệ thống. Hãy chụp ảnh màn hình này gửi cho Mị để nhận quà nhé! 💌</p>
+            <div class="wheel-container">
+                <canvas id="wheelCanvas" width="300" height="300"></canvas>
+                <div class="wheel-marker">🎀</div>
+            </div>
+            
+            <button id="btnQuay" class="btn btn-main" onclick="batDauQuay()">Quay Ngay Thôi!</button>
+            <button id="btnReset" class="btn btn-clear" onclick="resetVongQuay()" style="display: none;">Chơi Lại Nè</button>
+        </div>
+        
+        <div id="result"></div>
+
+        <!-- Lịch sử -->
+        <div class="history-box">
+            <h3>📝 Túi đồ của bạn:</h3>
+            <ul id="historyList"></ul>
+            <button class="btn btn-clear-history" onclick="xoaLichSu()">Dọn dẹp</button>
         </div>
     </div>
 
