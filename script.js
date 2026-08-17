@@ -1,9 +1,17 @@
 // ==========================================
-// 1. CẤU HÌNH KẾT NỐI SUPABASE
+// 1. CẤU HÌNH & KHỞI TẠO SUPABASE AN TOÀN
 // ==========================================
 const supabaseUrl = 'https://ohsvsxltuctosomaoayp.supabase.co';
 const supabaseKey = 'sb_publishable_Y8GKTLcYFyaeBjeH03O3yQ_jg-9Yc9o';
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+let supabaseClient = null;
+try {
+    if (window.supabase && window.supabase.createClient) {
+        supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+    }
+} catch (e) {
+    console.error("Lỗi khởi tạo Supabase:", e);
+}
 
 let danhSachPhanQuat = [];
 let currentAngle = 0;
@@ -16,43 +24,74 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ==========================================
-// 2. TẢI QUÀ TỪ SUPABASE (DATABASE)
+// 2. TẢI QUÀ TỪ SUPABASE
 // ==========================================
 async function layDuLieuTuSupabase() {
-    document.getElementById("result").innerHTML = "Đang tải kho quà từ máy chủ... ⏳";
+    const resultEl = document.getElementById("result");
+    if (resultEl) resultEl.innerHTML = "Đang tải kho quà... ⏳";
     
-    const { data, error } = await supabase.from('KhoQua').select('*');
-
-    if (error) {
-        console.log("Lỗi tải quà Supabase:", error);
-        document.getElementById("result").innerHTML = "Lỗi kết nối mạng, vui lòng tải lại trang!";
+    if (!supabaseClient) {
+        console.warn("Chưa nạp được thư viện Supabase CDN!");
+        if (resultEl) resultEl.innerHTML = "Lỗi thư viện máy chủ, hãy thử tải lại trang!";
         return;
     }
 
-    if (data && data.length > 0) {
-        danhSachPhanQuat = data;
-        document.getElementById("result").innerHTML = ""; 
-        veVongQuay(0);
-        khoiTaoBocTham();
-    } else {
-        document.getElementById("result").innerHTML = "Kho quà đang trống, chờ shop cập nhật nhé!";
+    try {
+        const { data, error } = await supabaseClient.from('KhoQua').select('*');
+
+        if (error) {
+            console.error("Lỗi Supabase:", error);
+            if (resultEl) resultEl.innerHTML = "Lỗi kết nối kho quà!";
+            return;
+        }
+
+        if (data && data.length > 0) {
+            danhSachPhanQuat = data;
+            if (resultEl) resultEl.innerHTML = ""; 
+            veVongQuay(0);
+            khoiTaoBocTham();
+        } else {
+            if (resultEl) resultEl.innerHTML = "Kho quà đang trống, chờ shop thêm quà nhé!";
+        }
+    } catch (err) {
+        console.error("Lỗi mạng:", err);
     }
 }
 
 // ==========================================
-// 3. LOGIC CHỐNG GIAN LẬN & GIAO DIỆN
+// 3. XỬ LÝ GIAO DIỆN & NÚT VÀO CHƠI
 // ==========================================
+window.xacNhanTen = function() {
+    const input = document.getElementById("inputTenKhach");
+    const ten = input ? input.value.trim() : "";
+    
+    if (!ten) {
+        alert("Bạn nhập tên vào để Mị trao quà nha! 🌸");
+        return;
+    }
+    
+    tenKhachHang = ten;
+    document.getElementById("loginScreen").style.display = "none";
+    document.getElementById("mainGameScreen").style.display = "block";
+    document.getElementById("tenHienThi").innerText = tenKhachHang;
+    
+    veVongQuay(0);
+    khoiTaoBocTham();
+};
+
 function kiemTraDaChoiChua() {
     const dataCu = localStorage.getItem("daNhanQua_TramQuaTang");
     if (dataCu) {
         const parsed = JSON.parse(dataCu);
         document.getElementById("loginScreen").style.display = "none";
         document.getElementById("mainGameScreen").style.display = "block";
-        document.querySelector(".tab-buttons").style.display = "none";
+        const tabBtns = document.querySelector(".tab-buttons");
+        if (tabBtns) tabBtns.style.display = "none";
+        
         document.getElementById("bocThamSection").style.display = "none";
         document.getElementById("vongQuaySection").style.display = "none";
-        
         document.getElementById("tenHienThi").innerText = parsed.ten;
+        
         document.getElementById("result").innerHTML = `
             <div style="background: #fff0f3; padding: 20px; border-radius: 20px; border: 2px dashed #ff477e; margin-top: 20px;">
                 <h3 style="color: #ff477e; margin-bottom: 10px;">Tadaaa! 🎉</h3>
@@ -63,19 +102,7 @@ function kiemTraDaChoiChua() {
     }
 }
 
-function xacNhanTen() {
-    const input = document.getElementById("inputTenKhach").value.trim();
-    if (!input) {
-        alert("Bạn nhập tên vào để Mị trao quà nha! 🌸");
-        return;
-    }
-    tenKhachHang = input;
-    document.getElementById("loginScreen").style.display = "none";
-    document.getElementById("mainGameScreen").style.display = "block";
-    document.getElementById("tenHienThi").innerText = tenKhachHang;
-}
-
-function doiGiaoDien(loai) {
+window.doiGiaoDien = function(loai) {
     const bocThamSec = document.getElementById("bocThamSection");
     const vongQuaySec = document.getElementById("vongQuaySection");
     const buttons = document.querySelectorAll(".tab-btn");
@@ -94,10 +121,10 @@ function doiGiaoDien(loai) {
     }
     veVongQuay(currentAngle);
     khoiTaoBocTham();
-}
+};
 
 // ==========================================
-// 4. VẼ VÒNG QUAY & BỐC THĂM
+// 4. VẼ CANVAS & TẠO HỘP QUÀ
 // ==========================================
 function veVongQuay(angle) {
     const canvas = document.getElementById("wheelCanvas");
@@ -109,7 +136,6 @@ function veVongQuay(angle) {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     const total = danhSachPhanQuat.length;
-
     if (total === 0) return;
 
     const arcSize = (2 * Math.PI) / total;
@@ -149,8 +175,8 @@ function veVongQuay(angle) {
 
 function khoiTaoBocTham() {
     const container = document.getElementById("giftList");
+    if (!container) return;
     container.innerHTML = ""; 
-    
     if (danhSachPhanQuat.length === 0) return;
 
     let mangXaoTron = [...danhSachPhanQuat].sort(() => Math.random() - 0.5);
@@ -164,9 +190,9 @@ function khoiTaoBocTham() {
 }
 
 // ==========================================
-// 5. CHƠI GAME & GỬI BÁO CÁO LÊN SUPABASE
+// 5. CHƠI VÀ LƯU KẾT QUẢ VỀ SUPABASE
 // ==========================================
-function batDauQuay() {
+window.batDauQuay = function() {
     if (danhSachPhanQuat.length === 0) return;
     if (isSpinning) return;
     if (localStorage.getItem("daNhanQua_TramQuaTang")) return; 
@@ -205,23 +231,20 @@ function batDauQuay() {
         }
     }
     requestAnimationFrame(animate);
-}
+};
 
-function chonHopQua(tenQua) {
+window.chonHopQua = function(tenQua) {
     if (localStorage.getItem("daNhanQua_TramQuaTang")) return; 
     document.getElementById("result").innerHTML = "Đang mở hộp quà... 🎀";
     document.getElementById("giftList").style.display = "none";
     setTimeout(() => {
         tienHanhKhoaGameVaBaoCao(tenQua);
     }, 800);
-}
+};
 
-// Hàm Xử lý Khóa Game & Lưu lịch sử vĩnh viễn lên Supabase
 async function tienHanhKhoaGameVaBaoCao(tenQuaTrung) {
-    // Lưu tạm vào máy khách để chống quay 2 lần
     localStorage.setItem("daNhanQua_TramQuaTang", JSON.stringify({ ten: tenKhachHang, qua: tenQuaTrung }));
     
-    // Hiển thị kết quả ra màn hình
     document.getElementById("result").innerHTML = `
         <div style="background: #fff0f3; padding: 20px; border-radius: 20px; border: 2px dashed #ff477e; margin-top: 20px;">
             <h3 style="color: #ff477e; margin-bottom: 10px;">Tadaaa! 🎉</h3>
@@ -230,20 +253,16 @@ async function tienHanhKhoaGameVaBaoCao(tenQuaTrung) {
             <p style="font-size: 13px; color: #ff6b81; font-weight: bold; margin-top: 15px;">Hệ thống đã lưu kết quả. Chụp màn hình gửi Mị nha! 💌</p>
         </div>`;
     
-    // Ẩn các nút chơi
-    document.querySelector(".tab-buttons").style.display = "none";
+    const tabBtns = document.querySelector(".tab-buttons");
+    if (tabBtns) tabBtns.style.display = "none";
     document.getElementById("vongQuaySection").style.display = "none";
     document.getElementById("bocThamSection").style.display = "none";
     
-    // Đẩy dữ liệu về bảng LichSu trên Supabase
-    const thoiGianHienTai = new Date().toLocaleString('vi-VN');
-    const { error } = await supabase.from('LichSu').insert([
-        { thoiGian: thoiGianHienTai, tenKhach: tenKhachHang, quaTrung: tenQuaTrung }
-    ]);
-    
-    if (error) console.log("Lỗi lưu lịch sử Supabase:", error);
+    if (supabaseClient) {
+        const thoiGianHienTai = new Date().toLocaleString('vi-VN');
+        const { error } = await supabaseClient.from('LichSu').insert([
+            { thoiGian: thoiGianHienTai, tenKhach: tenKhachHang, quaTrung: tenQuaTrung }
+        ]);
+        if (error) console.error("Lỗi gửi Supabase:", error);
+    }
 }
-
-// Các hàm rác (Thêm xóa thủ công) được gỡ bỏ vì dùng Database rồi.
-function hienThiLichSu() {} // Ẩn lỗi nếu HTML cũ còn gọi
-function xoaLichSu() {}
