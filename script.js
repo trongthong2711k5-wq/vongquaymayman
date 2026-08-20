@@ -292,3 +292,24 @@ async function tienHanhKhoaGameVaBaoCao(tenQuaTrung) {
         ]);
     }
 }
+// ==========================================
+// 8. CÔNG TẮC ẨN CỦA ADMIN (BẤM 5 LẦN VÀO TIÊU ĐỀ)
+// ==========================================
+let soLanBam = 0;
+let thoiGianCho;
+
+window.kichHoatAdmin = function() {
+    soLanBam++;
+    clearTimeout(thoiGianCho);
+    
+    // Nếu bấm liên tục đủ 5 lần thì gọi hàm gọi mật khẩu
+    if (soLanBam === 5) {
+        moAdmin();
+        soLanBam = 0; // Reset lại bộ đếm
+    }
+    
+    // Nếu ngưng bấm quá 1.5 giây thì tự động reset về 0 (để chống khách vô tình bấm trúng)
+    thoiGianCho = setTimeout(() => {
+        soLanBam = 0;
+    }, 1500);
+};
