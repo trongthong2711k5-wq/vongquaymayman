@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
     <div class="floating-shapes shape-1">💖</div>
     <div class="floating-shapes shape-2">✨</div>
     <div class="floating-shapes shape-3">🌸</div>
@@ -17,21 +16,18 @@
     <div class="container">
         <h1>Trạm Quà Tặng 🌸</h1>
         
-        <!-- 1. MÀN HÌNH NHẬP TÊN -->
         <div id="loginScreen">
-            <p class="subtitle">Nhập tên của bạn để admin ghi nhận phần thưởng nhé!</p>
+            <p class="subtitle">Nhập tên của bạn để Mị ghi nhận phần thưởng nhé!</p>
             <div style="margin-bottom: 20px;">
                 <input type="text" id="inputTenKhach" placeholder="VD: Lan Nguyễn..." style="width: 100%; padding: 15px; border: 3px solid #ffb6c1; border-radius: 20px; font-family: 'Nunito', sans-serif; font-size: 16px; text-align: center; outline: none; box-sizing: border-box;" />
             </div>
             <button class="tab-btn active" onclick="xacNhanTen()" style="width: 100%; padding: 15px; border-radius: 20px; font-size: 16px; margin-bottom: 15px;">Vào Chơi Ngay</button>
             
-            <!-- NÚT ẨN DÀNH CHO ADMIN -->
             <div style="margin-top: 30px; font-size: 11px;">
                 <a href="#" onclick="moAdmin()" style="color: #ffb6c1; text-decoration: none; font-weight: bold;">👑 Quản Trị Viên</a>
             </div>
         </div>
 
-        <!-- 2. MÀN HÌNH CHƠI GAME -->
         <div id="mainGameScreen" style="display: none;">
             <p class="subtitle">Chào <span id="tenHienThi" style="color:#ff477e; font-weight:900;"></span>! Hãy thử xem hôm nay vũ trụ gửi gì cho bạn nhé!</p>
             
@@ -61,7 +57,6 @@
             <div id="result"></div>
         </div>
 
-        <!-- 3. MÀN HÌNH ADMIN (QUẢN TRỊ) -->
         <div id="adminScreen" style="display: none; text-align: left;">
             <h2 style="color: #ff477e; text-align: center; margin-bottom: 5px;">👑 Lịch Sử Nhận Quà</h2>
             <p style="text-align: center; font-size: 12px; color: #636e72; margin-bottom: 15px;">Danh sách khách hàng đã trúng thưởng</p>
@@ -71,22 +66,20 @@
                     <thead>
                         <tr style="border-bottom: 2px solid #ffb6c1; color: #ff477e;">
                             <th style="padding: 8px 5px; text-align: left;">Thời Gian</th>
-                            <th style="padding: 8px 5px; text-align: left;">Khách Hàng</th>
-                            <th style="padding: 8px 5px; text-align: left;">Quà Trúng</th>
+                            <th style="padding: 8px 5px; text-align: left;">Khách</th>
+                            <th style="padding: 8px 5px; text-align: left;">Quà</th>
                         </tr>
                     </thead>
-                    <tbody id="adminHistoryList">
-                        <!-- Dữ liệu sẽ đổ vào đây -->
-                    </tbody>
+                    <tbody id="adminHistoryList"></tbody>
                 </table>
             </div>
             
-            <button class="btn-main" onclick="dongAdmin()" style="width: 100%; border: none; padding: 12px; border-radius: 20px; font-weight: bold; margin-top: 15px; cursor: pointer;">Thoát</button>
+            <button onclick="xoaNhoTam()" style="width: 100%; border: none; padding: 12px; border-radius: 20px; font-weight: bold; margin-top: 15px; cursor: pointer; background: #ffeaa7; color: #d35400;">🔄 Xóa bộ nhớ máy này (Để Test lại)</button>
+            <button class="btn-main" onclick="dongAdmin()" style="width: 100%; border: none; padding: 12px; border-radius: 20px; font-weight: bold; margin-top: 10px; cursor: pointer;">Thoát</button>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Số đuôi ?v=4 để đảm bảo Chrome tải bản mới nhất -->
-    <script src="script.js?v=4"></script> 
+    <script src="script.js?v=5"></script> 
 </body>
 </html>
