@@ -75,7 +75,7 @@ window.hienThiDanhSachQuanLy = function() {
 };
 
 window.moAdmin = async function() {
-    const pass = prompt("Nhập mật khẩu Admin (Gợi ý: 2711):");
+    const pass = prompt("Nhập mật khẩu Admin:");
     if (pass !== "2711") { alert("Sai mật khẩu!"); return; }
 
     document.getElementById("loginScreen").style.display = "none";
