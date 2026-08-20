@@ -45,60 +45,14 @@
             <!-- GIAO DIỆN 2: VÒNG QUAY -->
             <div id="vongQuaySection" class="game-section" style="display: none;">
                 
-                <<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trạm Quà Tặng Dễ Thương 🌸</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-
-    <!-- Trang trí bay lơ lửng -->
-    <div class="floating-shapes shape-1">💖</div>
-    <div class="floating-shapes shape-2">✨</div>
-    <div class="floating-shapes shape-3">🌸</div>
-    <div class="floating-shapes shape-4">🧸</div>
-    
-    <div class="container">
-        <h1>Trạm Quà Tặng 🌸</h1>
-        
-        <!-- GIAO DIỆN MỚI: MÀN HÌNH NHẬP TÊN -->
-        <div id="loginScreen">
-            <p class="subtitle">Nhập tên của bạn để Mị ghi nhận phần thưởng nhé!</p>
-            <div style="margin-bottom: 20px;">
-                <input type="text" id="inputTenKhach" placeholder="VD: Lan Nguyễn..." style="width: 100%; padding: 15px; border: 3px solid #ffb6c1; border-radius: 20px; font-family: 'Nunito', sans-serif; font-size: 16px; text-align: center; outline: none; box-sizing: border-box;" />
-            </div>
-            <button class="tab-btn active" onclick="xacNhanTen()" style="width: 100%; padding: 15px; border-radius: 20px; font-size: 16px; margin-bottom: 15px;">Vào Chơi Ngay</button>
-        </div>
-
-        <!-- TOÀN BỘ GIAO DIỆN CŨ (Ban đầu sẽ bị ẩn đi) -->
-        <div id="mainGameScreen" style="display: none;">
-            <p class="subtitle">Chào <span id="tenHienThi" style="color:#ff477e; font-weight:900;"></span>! Hãy thử xem hôm nay vũ trụ gửi gì cho bạn nhé!</p>
-            
-            <!-- Nút chuyển tab -->
-            <div class="tab-buttons">
-                <button class="tab-btn active" onclick="doiGiaoDien('bocTham')">🎁 Bốc Thăm</button>
-                <button class="tab-btn" onclick="doiGiaoDien('vongQuay')">🎡 Vòng Quay</button>
-            </div>
-
-            <!-- GIAO DIỆN 1: BỐC THĂM -->
-            <div id="bocThamSection" class="game-section">
-                <div id="giftList" class="gift-grid"></div>
-            </div>
-
-            <!-- GIAO DIỆN 2: VÒNG QUAY -->
-            <div id="vongQuaySection" class="game-section" style="display: none;">
-                
-                <!-- Đã ẩn phần thêm quà thủ công vì hiện tại dùng Database Supabase -->
-                <div class="add-box" style="display: none;">
+                <!-- Ô nhập quà đã được bật lại -->
+                <div class="add-box">
                     <input type="text" id="inputTenQua" placeholder="Thêm món quà mới vô đây..." />
                     <button class="btn-add" onclick="themQuaMoi()">Thêm</button>
                 </div>
 
-                <div class="manage-gifts-box" style="display: none;">
+                <!-- Danh sách quản lý quà đã được bật lại -->
+                <div class="manage-gifts-box">
                     <ul id="manageGiftsList" class="manage-gifts-list"></ul>
                 </div>
 
@@ -108,7 +62,6 @@
                 </div>
                 
                 <button id="btnQuay" class="btn btn-main" onclick="batDauQuay()">Quay Ngay Thôi!</button>
-                <button id="btnReset" class="btn btn-clear" onclick="resetVongQuay()" style="display: none;">Chơi Lại Nè</button>
             </div>
             
             <div id="result"></div>
@@ -125,33 +78,7 @@
     <!-- THƯ VIỆN SUPABASE (Bắt buộc phải có để kết nối Database) -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <script src="script.js"></script>
-</body>
-</html>
-
-                <div class="wheel-container">
-                    <canvas id="wheelCanvas" width="300" height="300"></canvas>
-                    <div class="wheel-marker">🎀</div>
-                </div>
-                
-                <button id="btnQuay" class="btn btn-main" onclick="batDauQuay()">Quay Ngay Thôi!</button>
-                <button id="btnReset" class="btn btn-clear" onclick="resetVongQuay()" style="display: none;">Chơi Lại Nè</button>
-            </div>
-            
-            <div id="result"></div>
-
-            <!-- Lịch sử -->
-            <div class="history-box">
-                <h3>📝 Túi đồ của bạn:</h3>
-                <ul id="historyList"></ul>
-                <button class="btn btn-clear-history" onclick="xoaLichSu()">Dọn dẹp</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- THƯ VIỆN SUPABASE (Bắt buộc phải có để kết nối Database) -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
-    <script src="script.js"></script>
+    <!-- Ép tải lại script.js -->
+    <script src="script.js?v=3"></script>
 </body>
 </html>
