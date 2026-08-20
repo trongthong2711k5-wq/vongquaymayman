@@ -14,19 +14,19 @@ let currentAngle = 0;
 let isSpinning = false;
 let tenKhachHang = "";
 
+// BẢNG MÀU CỐ ĐỊNH (Ép bánh xe không bị trùng màu kề nhau)
+const BANG_MAU = ['#ff9ff3', '#feca57', '#48dbfb', '#ff6b6b', '#1dd1a1', '#c8d6e5', '#ff9a9e', '#7bed9f'];
+
 // ==========================================
 // 2. KHỞI CHẠY KHI MỞ WEB
 // ==========================================
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. Nếu khách đã chơi rồi thì khóa luôn từ ngoài cửa
     const dataCu = localStorage.getItem("daNhanQua_TramQuaTang");
     if (dataCu) {
         const parsed = JSON.parse(dataCu);
         hienThiManHinhDaChoi(parsed.ten, parsed.qua);
         return; 
     }
-    
-    // 2. Tải quà từ máy chủ
     layDuLieuTuSupabase();
 });
 
@@ -53,12 +53,9 @@ window.themQuaMoi = async function() {
     const tenQua = input ? input.value.trim() : "";
     if (!tenQua) { alert("Nhập tên quà nha!"); return; }
 
-    const danhSachMau = ['#ff9ff3', '#feca57', '#48dbfb', '#ff6b6b', '#1dd1a1', '#c8d6e5', '#ff9a9e'];
-    const mauNgauNhien = danhSachMau[Math.floor(Math.random() * danhSachMau.length)];
-    
     input.value = "Đang lưu... ⏳";
     if (supabaseClient) {
-        await supabaseClient.from('KhoQua').insert([{ text: tenQua, color: mauNgauNhien }]);
+        await supabaseClient.from('KhoQua').insert([{ text: tenQua }]); // Không cần lưu random color nữa
         input.value = "";
         layDuLieuTuSupabase();
     }
@@ -78,27 +75,73 @@ window.hienThiDanhSachQuanLy = function() {
     list.innerHTML = "";
     if (danhSachPhanQuat.length === 0) return;
 
-    danhSachPhanQuat.forEach((qua) => {
+    danhSachPhanQuat.forEach((qua, i) => {
+        let colorIndex = i % BANG_MAU.length;
+        if (i === danhSachPhanQuat.length - 1 && colorIndex === 0 && danhSachPhanQuat.length > 1) colorIndex = 1;
+
         const li = document.createElement("li");
-        li.innerHTML = `<span><span style="color:${qua.color};">⬤</span> ${qua.text}</span>
+        li.innerHTML = `<span><span style="color:${BANG_MAU[colorIndex]};">⬤</span> ${qua.text}</span>
                         <button class="btn-remove-gift" onclick="xoaQua(${qua.id})">Xóa</button>`;
         list.appendChild(li);
     });
 };
 
 // ==========================================
-// 4. CHUYỂN ĐỔI GIAO DIỆN
+// 4. MÀN HÌNH QUẢN TRỊ ADMIN (MỚI THÊM)
+// ==========================================
+window.moAdmin = async function() {
+    // Mật khẩu bảo vệ khu vực Admin
+    const pass = prompt("Nhập mật khẩu Admin để vào kho (Gợi ý: 2711):");
+    if (pass !== "2711") {
+        alert("Sai mật khẩu gòi!");
+        return;
+    }
+
+    document.getElementById("loginScreen").style.display = "none";
+    document.getElementById("mainGameScreen").style.display = "none";
+    document.getElementById("adminScreen").style.display = "block";
+
+    const tbody = document.getElementById("adminHistoryList");
+    tbody.innerHTML = "<tr><td colspan='3' style='text-align:center; padding: 15px;'>Đang tải dữ liệu... ⏳</td></tr>";
+
+    if (supabaseClient) {
+        // Lấy lịch sử mới nhất xếp lên đầu
+        const { data, error } = await supabaseClient.from('LichSu').select('*').order('id', { ascending: false });
+        if (!error && data) {
+            tbody.innerHTML = "";
+            if (data.length === 0) {
+                tbody.innerHTML = "<tr><td colspan='3' style='text-align:center; padding: 15px;'>Chưa có ai trúng quà.</td></tr>";
+            } else {
+                data.forEach(row => {
+                    tbody.innerHTML += `
+                        <tr style="border-bottom: 1px solid #ffe4e1;">
+                            <td style="padding: 10px 5px; font-size: 11px; color: #636e72;">${row.thoiGian || ''}</td>
+                            <td style="padding: 10px 5px; font-weight: 800; color: #ff477e;">${row.tenKhach || ''}</td>
+                            <td style="padding: 10px 5px; font-weight: bold; color: #2d3436;">${row.quaTrung || ''}</td>
+                        </tr>
+                    `;
+                });
+            }
+        }
+    }
+};
+
+window.dongAdmin = function() {
+    window.location.reload(); // Ép tải lại trang để trở về trạng thái ban đầu
+};
+
+// ==========================================
+// 5. CHUYỂN ĐỔI GIAO DIỆN
 // ==========================================
 window.xacNhanTen = function() {
     const input = document.getElementById("inputTenKhach");
     const ten = input ? input.value.trim() : "";
     if (!ten) {
-        alert("Bạn nhập tên vào để Mị trao quà nha! 🌸");
+        alert("Bạn nhập tên vào để trao quà nha! 🌸");
         return;
     }
     
     tenKhachHang = ten;
-    // Chuyển màn hình từ Nhập Tên sang Game
     document.getElementById("loginScreen").style.display = "none";
     document.getElementById("mainGameScreen").style.display = "block";
     document.getElementById("tenHienThi").innerText = tenKhachHang;
@@ -145,7 +188,7 @@ function hienThiManHinhDaChoi(ten, qua) {
 }
 
 // ==========================================
-// 5. VẼ VÒNG QUAY & BỐC THĂM
+// 6. VẼ VÒNG QUAY & BỐC THĂM
 // ==========================================
 function veVongQuay(angle) {
     const canvas = document.getElementById("wheelCanvas");
@@ -175,7 +218,12 @@ function veVongQuay(angle) {
         ctx.moveTo(centerX, centerY);
         ctx.arc(centerX, centerY, radius, startAngle, endAngle);
         ctx.closePath();
-        ctx.fillStyle = qua.color || "#ffb6c1";
+        
+        // TÍNH TOÁN MÀU LUÂN PHIÊN (Không bao giờ trùng kề nhau)
+        let colorIndex = i % BANG_MAU.length;
+        if (i === total - 1 && colorIndex === 0 && total > 1) colorIndex = 1;
+        ctx.fillStyle = BANG_MAU[colorIndex];
+        
         ctx.fill();
         ctx.lineWidth = 3;
         ctx.strokeStyle = "#ffffff";
@@ -214,7 +262,7 @@ function khoiTaoBocTham() {
 }
 
 // ==========================================
-// 6. CHƠI VÀ LƯU LỊCH SỬ LÊN SUPABASE
+// 7. CHƠI VÀ LƯU LỊCH SỬ LÊN SUPABASE
 // ==========================================
 window.batDauQuay = function() {
     if (danhSachPhanQuat.length === 0 || isSpinning || localStorage.getItem("daNhanQua_TramQuaTang")) return; 
