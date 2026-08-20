@@ -1,6 +1,3 @@
-// ==========================================
-// 1. KẾT NỐI SUPABASE
-// ==========================================
 const supabaseUrl = 'https://ohsvsxltuctosomaoayp.supabase.co';
 const supabaseKey = 'sb_publishable_Y8GKTLcYFyaeBjeH03O3yQ_jg-9Yc9o';
 let supabaseClient = null;
@@ -14,12 +11,8 @@ let currentAngle = 0;
 let isSpinning = false;
 let tenKhachHang = "";
 
-// BẢNG MÀU CỐ ĐỊNH (Ép bánh xe không bị trùng màu kề nhau)
 const BANG_MAU = ['#ff9ff3', '#feca57', '#48dbfb', '#ff6b6b', '#1dd1a1', '#c8d6e5', '#ff9a9e', '#7bed9f'];
 
-// ==========================================
-// 2. KHỞI CHẠY KHI MỞ WEB
-// ==========================================
 document.addEventListener("DOMContentLoaded", () => {
     const dataCu = localStorage.getItem("daNhanQua_TramQuaTang");
     if (dataCu) {
@@ -30,9 +23,6 @@ document.addEventListener("DOMContentLoaded", () => {
     layDuLieuTuSupabase();
 });
 
-// ==========================================
-// 3. TẢI VÀ QUẢN LÝ QUÀ (DATABASE)
-// ==========================================
 async function layDuLieuTuSupabase() {
     if (!supabaseClient) return;
     try {
@@ -43,9 +33,7 @@ async function layDuLieuTuSupabase() {
             khoiTaoBocTham();
             hienThiDanhSachQuanLy();
         }
-    } catch (err) {
-        console.error("Lỗi:", err);
-    }
+    } catch (err) { console.error("Lỗi:", err); }
 }
 
 window.themQuaMoi = async function() {
@@ -55,7 +43,7 @@ window.themQuaMoi = async function() {
 
     input.value = "Đang lưu... ⏳";
     if (supabaseClient) {
-        await supabaseClient.from('KhoQua').insert([{ text: tenQua }]); // Không cần lưu random color nữa
+        await supabaseClient.from('KhoQua').insert([{ text: tenQua }]);
         input.value = "";
         layDuLieuTuSupabase();
     }
@@ -86,32 +74,23 @@ window.hienThiDanhSachQuanLy = function() {
     });
 };
 
-// ==========================================
-// 4. MÀN HÌNH QUẢN TRỊ ADMIN (MỚI THÊM)
-// ==========================================
 window.moAdmin = async function() {
-    // Mật khẩu bảo vệ khu vực Admin
-    const pass = prompt("Nhập mật khẩu Admin để vào kho (Gợi ý: 2711):");
-    if (pass !== "2711") {
-        alert("Sai mật khẩu gòi!");
-        return;
-    }
+    const pass = prompt("Nhập mật khẩu Admin (Gợi ý: 2711):");
+    if (pass !== "2711") { alert("Sai mật khẩu!"); return; }
 
     document.getElementById("loginScreen").style.display = "none";
     document.getElementById("mainGameScreen").style.display = "none";
     document.getElementById("adminScreen").style.display = "block";
 
     const tbody = document.getElementById("adminHistoryList");
-    tbody.innerHTML = "<tr><td colspan='3' style='text-align:center; padding: 15px;'>Đang tải dữ liệu... ⏳</td></tr>";
+    tbody.innerHTML = "<tr><td colspan='3' style='text-align:center; padding: 15px;'>Đang tải... ⏳</td></tr>";
 
     if (supabaseClient) {
-        // Lấy lịch sử mới nhất xếp lên đầu
         const { data, error } = await supabaseClient.from('LichSu').select('*').order('id', { ascending: false });
         if (!error && data) {
             tbody.innerHTML = "";
-            if (data.length === 0) {
-                tbody.innerHTML = "<tr><td colspan='3' style='text-align:center; padding: 15px;'>Chưa có ai trúng quà.</td></tr>";
-            } else {
+            if (data.length === 0) tbody.innerHTML = "<tr><td colspan='3' style='text-align:center;'>Chưa có ai trúng quà.</td></tr>";
+            else {
                 data.forEach(row => {
                     tbody.innerHTML += `
                         <tr style="border-bottom: 1px solid #ffe4e1;">
@@ -126,20 +105,19 @@ window.moAdmin = async function() {
     }
 };
 
-window.dongAdmin = function() {
-    window.location.reload(); // Ép tải lại trang để trở về trạng thái ban đầu
+window.dongAdmin = function() { window.location.reload(); };
+
+// XÓA TRÍ NHỚ ĐỂ TEST LẠI
+window.xoaNhoTam = function() {
+    localStorage.removeItem("daNhanQua_TramQuaTang");
+    alert("Đã mở khóa thiết bị! Giờ bạn có thể test lại từ đầu như khách mới.");
+    window.location.reload();
 };
 
-// ==========================================
-// 5. CHUYỂN ĐỔI GIAO DIỆN
-// ==========================================
 window.xacNhanTen = function() {
     const input = document.getElementById("inputTenKhach");
     const ten = input ? input.value.trim() : "";
-    if (!ten) {
-        alert("Bạn nhập tên vào để trao quà nha! 🌸");
-        return;
-    }
+    if (!ten) { alert("Nhập tên vô nha! 🌸"); return; }
     
     tenKhachHang = ten;
     document.getElementById("loginScreen").style.display = "none";
@@ -174,7 +152,8 @@ window.doiGiaoDien = function(loai) {
 function hienThiManHinhDaChoi(ten, qua) {
     document.getElementById("loginScreen").style.display = "none";
     document.getElementById("mainGameScreen").style.display = "block";
-    document.querySelector(".tab-buttons").style.display = "none";
+    const tabs = document.querySelector(".tab-buttons");
+    if(tabs) tabs.style.display = "none";
     document.getElementById("bocThamSection").style.display = "none";
     document.getElementById("vongQuaySection").style.display = "none";
     document.getElementById("tenHienThi").innerText = ten;
@@ -187,9 +166,6 @@ function hienThiManHinhDaChoi(ten, qua) {
         </div>`;
 }
 
-// ==========================================
-// 6. VẼ VÒNG QUAY & BỐC THĂM
-// ==========================================
 function veVongQuay(angle) {
     const canvas = document.getElementById("wheelCanvas");
     if (!canvas) return;
@@ -219,7 +195,6 @@ function veVongQuay(angle) {
         ctx.arc(centerX, centerY, radius, startAngle, endAngle);
         ctx.closePath();
         
-        // TÍNH TOÁN MÀU LUÂN PHIÊN (Không bao giờ trùng kề nhau)
         let colorIndex = i % BANG_MAU.length;
         if (i === total - 1 && colorIndex === 0 && total > 1) colorIndex = 1;
         ctx.fillStyle = BANG_MAU[colorIndex];
@@ -261,9 +236,6 @@ function khoiTaoBocTham() {
     });
 }
 
-// ==========================================
-// 7. CHƠI VÀ LƯU LỊCH SỬ LÊN SUPABASE
-// ==========================================
 window.batDauQuay = function() {
     if (danhSachPhanQuat.length === 0 || isSpinning || localStorage.getItem("daNhanQua_TramQuaTang")) return; 
 
