@@ -31,13 +31,13 @@ async function layDuLieuTuSupabase() {
     if (resultEl) resultEl.innerHTML = "Đang tải kho quà... ⏳";
     
     if (!supabaseClient) {
-        console.warn("Chưa nạp được thư viện Supabase CDN!");
-        if (resultEl) resultEl.innerHTML = "Lỗi thư viện máy chủ, hãy thử tải lại trang!";
+        if (resultEl) resultEl.innerHTML = "Lỗi kết nối máy chủ!";
         return;
     }
 
     try {
-        const { data, error } = await supabaseClient.from('KhoQua').select('*');
+        // Lấy danh sách quà và sắp xếp theo ID
+        const { data, error } = await supabaseClient.from('KhoQua').select('*').order('id', { ascending: true });
 
         if (error) {
             console.error("Lỗi Supabase:", error);
@@ -45,21 +45,98 @@ async function layDuLieuTuSupabase() {
             return;
         }
 
-        if (data && data.length > 0) {
-            danhSachPhanQuat = data;
+        danhSachPhanQuat = data || [];
+        
+        if (danhSachPhanQuat.length > 0) {
             if (resultEl) resultEl.innerHTML = ""; 
-            veVongQuay(0);
-            khoiTaoBocTham();
         } else {
-            if (resultEl) resultEl.innerHTML = "Kho quà đang trống, chờ shop thêm quà nhé!";
+            if (resultEl) resultEl.innerHTML = "Kho quà đang trống, hãy thêm quà nhé!";
         }
+        
+        // Vẽ lại toàn bộ giao diện sau khi tải
+        veVongQuay(0);
+        khoiTaoBocTham();
+        hienThiDanhSachQuanLy();
+
     } catch (err) {
         console.error("Lỗi mạng:", err);
     }
 }
 
 // ==========================================
-// 3. XỬ LÝ GIAO DIỆN & NÚT VÀO CHƠI
+// 3. THÊM & XÓA QUÀ TRỰC TIẾP TRÊN WEB
+// ==========================================
+window.themQuaMoi = async function() {
+    const input = document.getElementById("inputTenQua");
+    const tenQua = input ? input.value.trim() : "";
+
+    if (!tenQua) {
+        alert("Vui lòng nhập tên món quà nha!");
+        return;
+    }
+
+    // Tự động lấy một màu ngẫu nhiên cho món quà
+    const danhSachMau = ['#ff9ff3', '#feca57', '#48dbfb', '#ff6b6b', '#1dd1a1', '#c8d6e5', '#ff9a9e', '#7bed9f'];
+    const mauNgauNhien = danhSachMau[Math.floor(Math.random() * danhSachMau.length)];
+
+    input.value = "Đang lưu lên máy chủ... ⏳";
+    input.disabled = true;
+
+    if (supabaseClient) {
+        const { error } = await supabaseClient.from('KhoQua').insert([
+            { text: tenQua, color: mauNgauNhien }
+        ]);
+
+        if (error) {
+            console.error("Lỗi thêm quà:", error);
+            alert("Có lỗi xảy ra khi lưu lên Supabase!");
+        }
+        
+        input.value = "";
+        input.disabled = false;
+        // Bắn lệnh tải lại kho quà
+        layDuLieuTuSupabase(); 
+    }
+};
+
+window.xoaQua = async function(id) {
+    if(!confirm("Bạn có chắc muốn xóa món quà này khỏi Supabase không?")) return;
+    
+    if (supabaseClient) {
+        const { error } = await supabaseClient.from('KhoQua').delete().eq('id', id);
+        
+        if (error) {
+            console.error("Lỗi xóa quà:", error);
+            alert("Có lỗi xảy ra khi xóa!");
+        } else {
+            // Xóa thành công thì tải lại kho quà
+            layDuLieuTuSupabase(); 
+        }
+    }
+};
+
+window.hienThiDanhSachQuanLy = function() {
+    const list = document.getElementById("manageGiftsList");
+    if (!list) return;
+    list.innerHTML = "";
+    
+    if (danhSachPhanQuat.length === 0) {
+        list.innerHTML = "<div class='empty-msg'>Chưa có món quà nào. Bạn thêm vào nha!</div>";
+        return;
+    }
+
+    danhSachPhanQuat.forEach((qua) => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+            <span><span style="color:${qua.color}; text-shadow: 0 1px 2px rgba(0,0,0,0.2);">⬤</span> ${qua.text}</span>
+            <button class="btn-remove-gift" onclick="xoaQua(${qua.id})">Xóa</button>
+        `;
+        list.appendChild(li);
+    });
+};
+
+// ==========================================
+// 4. XỬ LÝ GIAO DIỆN & NÚT VÀO CHƠI
 // ==========================================
 window.xacNhanTen = function() {
     const input = document.getElementById("inputTenKhach");
@@ -124,7 +201,7 @@ window.doiGiaoDien = function(loai) {
 };
 
 // ==========================================
-// 4. VẼ CANVAS & TẠO HỘP QUÀ
+// 5. VẼ CANVAS VÀ TẠO HỘP QUÀ
 // ==========================================
 function veVongQuay(angle) {
     const canvas = document.getElementById("wheelCanvas");
@@ -136,7 +213,23 @@ function veVongQuay(angle) {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     const total = danhSachPhanQuat.length;
-    if (total === 0) return;
+    
+    // Nếu chưa có quà, vẽ vòng xám
+    if (total === 0) {
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+        ctx.fillStyle = "#f1f2f6";
+        ctx.fill();
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = "#ffffff";
+        ctx.stroke();
+
+        ctx.textAlign = "center";
+        ctx.fillStyle = "#a4b0be";
+        ctx.font = "bold 16px 'Nunito', Arial";
+        ctx.fillText("Chưa có quà", centerX, centerY + 6);
+        return;
+    }
 
     const arcSize = (2 * Math.PI) / total;
 
@@ -190,7 +283,7 @@ function khoiTaoBocTham() {
 }
 
 // ==========================================
-// 5. CHƠI VÀ LƯU KẾT QUẢ VỀ SUPABASE
+// 6. CHƠI VÀ LƯU LỊCH SỬ LÊN SUPABASE
 // ==========================================
 window.batDauQuay = function() {
     if (danhSachPhanQuat.length === 0) return;
