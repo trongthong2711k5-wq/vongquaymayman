@@ -18,7 +18,7 @@
     <div class="container">
         <h1>Trạm Quà Tặng 🌸</h1>
         
-        <!-- GIAO DIỆN MỚI: MÀN HÌNH NHẬP TÊN -->
+        <!-- 1. MÀN HÌNH NHẬP TÊN (Hiện đầu tiên) -->
         <div id="loginScreen">
             <p class="subtitle">Nhập tên của bạn để Mị ghi nhận phần thưởng nhé!</p>
             <div style="margin-bottom: 20px;">
@@ -27,31 +27,27 @@
             <button class="tab-btn active" onclick="xacNhanTen()" style="width: 100%; padding: 15px; border-radius: 20px; font-size: 16px; margin-bottom: 15px;">Vào Chơi Ngay</button>
         </div>
 
-        <!-- TOÀN BỘ GIAO DIỆN CŨ (Ban đầu sẽ bị ẩn đi) -->
+        <!-- 2. MÀN HÌNH CHƠI GAME (Lúc đầu ẩn đi, nhập tên xong mới hiện) -->
         <div id="mainGameScreen" style="display: none;">
             <p class="subtitle">Chào <span id="tenHienThi" style="color:#ff477e; font-weight:900;"></span>! Hãy thử xem hôm nay vũ trụ gửi gì cho bạn nhé!</p>
             
-            <!-- Nút chuyển tab -->
             <div class="tab-buttons">
                 <button class="tab-btn active" onclick="doiGiaoDien('bocTham')">🎁 Bốc Thăm</button>
                 <button class="tab-btn" onclick="doiGiaoDien('vongQuay')">🎡 Vòng Quay</button>
             </div>
 
-            <!-- GIAO DIỆN 1: BỐC THĂM -->
+            <!-- Giao diện Bốc Thăm -->
             <div id="bocThamSection" class="game-section">
                 <div id="giftList" class="gift-grid"></div>
             </div>
 
-            <!-- GIAO DIỆN 2: VÒNG QUAY -->
+            <!-- Giao diện Vòng Quay -->
             <div id="vongQuaySection" class="game-section" style="display: none;">
-                
-                <!-- Ô nhập quà đã được bật lại -->
                 <div class="add-box">
                     <input type="text" id="inputTenQua" placeholder="Thêm món quà mới vô đây..." />
                     <button class="btn-add" onclick="themQuaMoi()">Thêm</button>
                 </div>
 
-                <!-- Danh sách quản lý quà đã được bật lại -->
                 <div class="manage-gifts-box">
                     <ul id="manageGiftsList" class="manage-gifts-list"></ul>
                 </div>
@@ -65,20 +61,12 @@
             </div>
             
             <div id="result"></div>
-
-            <!-- Lịch sử -->
-            <div class="history-box">
-                <h3>📝 Túi đồ của bạn:</h3>
-                <ul id="historyList"></ul>
-                <button class="btn btn-clear-history" onclick="xoaLichSu()">Dọn dẹp</button>
-            </div>
         </div>
     </div>
 
-    <!-- THƯ VIỆN SUPABASE (Bắt buộc phải có để kết nối Database) -->
+    <!-- Thư viện Supabase và Script -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
-    <!-- Ép tải lại script.js -->
-    <script src="script.js?v=3"></script>
+    <!-- Thêm ?v=999 để ép trình duyệt nhận file mới -->
+    <script src="script.js?v=999"></script> 
 </body>
 </html>
